@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,47 +8,37 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+    return MaterialApp.router(
+      routerConfig: _router,
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+final _router = GoRouter(
+  routes: [
+    GoRoute(
+      path: '/',
+      builder: (context, state) => MyHomePage(),
+    ),
+    GoRoute(
+      path: '/details',
+      builder: (context, state) => const DetailsScreen(),
+    ),
+  ],
+);
 
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('memoアプリ'),
+        title: const Text('memoアプリ'),
       ),
-      body: Center(
+      body: const Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Row(
@@ -63,9 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class PrivateContainer extends StatelessWidget {
-  const PrivateContainer({
-    super.key, required this.scene
-  });
+  const PrivateContainer({super.key, required this.scene});
 
   final String scene;
 
@@ -80,13 +69,41 @@ class PrivateContainer extends StatelessWidget {
         children: <Widget>[
           Text(scene),
           ElevatedButton(
-            onPressed: () {},
-            child: Text('god'),
+            onPressed: () => context.push('/details'),
+            child: Text('good'),
             style: ElevatedButton.styleFrom(
               fixedSize: Size.fromHeight(70),
             ),
           ),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) => AlertDialog(
+                  title: Text('memo'),
+                ),
+              );
+            },
+            child: Text('ダイアログ'),
+          ),
         ],
+      ),
+    );
+  }
+}
+
+class DetailsScreen extends StatelessWidget {
+  const DetailsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('詳細画面')),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () => context.pop('/'),
+          child: const Text('ホーム画面へ戻る'),
+        ),
       ),
     );
   }
